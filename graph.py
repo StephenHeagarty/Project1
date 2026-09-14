@@ -8,18 +8,22 @@ df = pd.read_csv("spy_capture_point.csv")
 WEAPON_WHITELIST = {"knife", "kunai", "spy_cicle", "eternal_reward", "big_earner"}
 df = df[df["weapon"].isin(WEAPON_WHITELIST)]
 
+# Exclude 0 death 0 kill
+df = df[(df["kills"] != 0) | (df["deaths"] != 0)]
+
 # Calculate KDR
 df["kdr"] = df["kills"] / df["deaths"].replace(0, 1)
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 7))
 
 # Average damage
-sns.boxplot(
+sns.violinplot(
     data=df,
     y="weapon",
     x="avg_dmg",
     ax=axes[0],
-    color="skyblue"
+    color="skyblue",
+    cut=0,
 )
 
 axes[0].set_title("Average Damage by Weapon")
@@ -28,12 +32,13 @@ axes[0].set_ylabel("Weapon")
 axes[0].grid(axis="x", alpha=0.3)
 
 # KDR
-sns.boxplot(
+sns.violinplot(
     data=df,
     y="weapon",
     x="kdr",
     ax=axes[1],
-    color="lightgreen"
+    color="lightgreen",
+    cut=0,
 )
 
 axes[1].set_title("K/D Ratio by Weapon")
